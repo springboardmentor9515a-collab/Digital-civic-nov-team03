@@ -1,11 +1,11 @@
-Civix – Digital Civic Engagement & Petition Platform
+# Civix – Digital Civic Engagement & Petition Platform # 
 
 Civix is a digital platform designed to empower citizens to actively participate in local governance. It enables people to raise issues through petitions, participate in polls, and track responses from public officials, promoting transparency and accountability within communities.
 
 The platform supports community-driven advocacy by allowing users to create location-based petitions and view public sentiment on local issues. Civix helps bridge the communication gap between citizens and government authorities by providing a structured and transparent engagement system.
 
 
-🌟 Key Features
+# Key Features #
 
 Petition Management
 Users can create, edit, sign, and geo-tag petitions to raise awareness and gather support for local issues.
@@ -19,8 +19,8 @@ Public officials can monitor petitions, analyze engagement levels, and respond t
 Role-Based Access Control
 Secure authentication with separate roles for Citizens and Public Officials, ensuring appropriate access and functionality.
 
-🛠 Tech Stack
-
+# 🛠 Tech Stack #
+ 
 Frontend: React.js, Vite
 
 Backend: Node.js, Express.js
@@ -29,7 +29,7 @@ Database: MongoDB (Mongoose)
 
 Authentication: JSON Web Tokens (JWT)
 
-⚙️ Local Installation & Setup Guide
+# ⚙️ Local Installation & Setup Guide #
 
 Follow the steps below to run the project locally on your system.
 
