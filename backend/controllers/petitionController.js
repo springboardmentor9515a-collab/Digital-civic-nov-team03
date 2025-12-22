@@ -1,94 +1,73 @@
-const Petition = require("../models/Petition");
-const Signature = require("../models/Signature");
+import Petition from "../models/petitions/Petition.js";
+import Signature from "../models/signatures/Signature.js";
 
-/* ================= CREATE PETITION ================= */
-exports.createPetition = async (req, res) => {
+/**
+ * CREATE PETITION
+ */
+export const createPetition = async (req, res) => {
   try {
-    const { title, description, category, location } = req.body;
-
-    if (!title || !description || !category || !location) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
     const petition = await Petition.create({
-      title,
-      description,
-      category,
-      location,
-      creator: req.user._id,
+      title: req.body.title,
+      description: req.body.description,
+      category: req.body.category,
+      creator: req.user.id, // from auth middleware
     });
 
     res.status(201).json(petition);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create petition" });
+    res.status(500).json({ message: error.message });
   }
 };
 
-/* ================= GET ALL PETITIONS ================= */
-exports.getAllPetitions = async (req, res) => {
+/**
+ * GET ALL PETITIONS (with filters)
+ */
+export const getAllPetitions = async (req, res) => {
   try {
-    const { location, category, status } = req.query;
+    const { category, search } = req.query;
 
     let filter = {};
-
-    if (location) filter.location = location;
     if (category) filter.category = category;
-    if (status) filter.status = status;
+    if (search)
+      filter.title = { $regex: search, $options: "i" };
 
-    // Officials → only their location
-    if (req.user?.role === "official") {
-      filter.location = req.user.location;
-    }
+    const petitions = await Petition.find(filter)
+      .populate("creator", "name email")
+      .sort({ createdAt: -1 });
 
-    const petitions = await Petition.find(filter).sort({ createdAt: -1 });
-    res.json(petitions);
+    // Add signature count
+    const petitionsWithCount = await Promise.all(
+      petitions.map(async (p) => {
+        const count = await Signature.countDocuments({
+          petitionId: p._id,
+        });
+        return { ...p._doc, signatureCount: count };
+      })
+    );
+
+    res.json(petitionsWithCount);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch petitions" });
+    res.status(500).json({ message: error.message });
   }
 };
 
-/* ================= GET PETITION BY ID ================= */
-exports.getPetitionById = async (req, res) => {
+/**
+ * GET PETITION BY ID
+ */
+export const getPetitionById = async (req, res) => {
   try {
     const petition = await Petition.findById(req.params.id)
-      .populate("creator", "name role location");
+      .populate("creator", "name email");
 
-    if (!petition) {
+    if (!petition)
       return res.status(404).json({ message: "Petition not found" });
-    }
 
     const signatureCount = await Signature.countDocuments({
-      petition: req.params.id,
+      petitionId: petition._id,
     });
 
-    res.json({ petition, signatureCount });
+    res.json({ ...petition._doc, signatureCount });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch petition" });
-  }
-};
-
-/* ================= SIGN PETITION ================= */
-exports.signPetition = async (req, res) => {
-  try {
-    const petition = await Petition.findById(req.params.id);
-
-    if (!petition) {
-      return res.status(404).json({ message: "Petition not found" });
-    }
-
-    if (petition.status !== "active") {
-      return res
-        .status(400)
-        .json({ message: "Petition is not active" });
-    }
-
-    await Signature.create({
-      petition: req.params.id,
-      user: req.user._id,
-    });
-
-    res.json({ message: "Petition signed successfully" });
-  } catch (error) {
-    res.status(400).json({ message: "Already signed petition" });
+    res.status(500).json({ message: error.message });
   }
 };

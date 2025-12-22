@@ -1,12 +1,15 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-async function connectDB() {
-  const uri = process.env.MONGODB_URI;
-  await mongoose.connect(uri);
-  const models = mongoose.modelNames();
-  for (const m of models) {
-    try { await mongoose.model(m).init(); } catch (e) {}
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: "DigitalCivicPortal",
+    });
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
   }
-}
+};
 
-module.exports = connectDB;
+export default connectDB;

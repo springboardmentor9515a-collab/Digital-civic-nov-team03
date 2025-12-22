@@ -1,22 +1,26 @@
-require("dotenv").config();
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const connectDB = require("./db");
-const User = require("./models/User");
-const Petition = require("./models/petitions/Petition");
-const Signature = require("./models/signatures/Signature");
-const Poll = require("./models/polls/Poll");
-const Vote = require("./models/votes/Vote");
+import express from "express";
+import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import cors from "cors";
+
+import connectDB from "./db.js";
+
+// Models
+import User from "./models/User.js";
+import Petition from "./models/petitions/Petition.js";
+import Signature from "./models/signatures/Signature.js";
+import Poll from "./models/polls/Poll.js";
+import Vote from "./models/votes/Vote.js";
+
+// Routes
+import petitionRoutes from "./routes/petitionRoutes.js";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
-
-
-const cors = require('cors')
-app.use(cors())
-
-
+app.use(cors());
 
 const PORT = process.env.PORT || 4000;
 const SECRET = process.env.JWT_SECRET;
@@ -34,74 +38,108 @@ connectDB()
     console.error("DB Error:", err);
   });
 
+/**
+ * AUTH MIDDLEWARE
+ */
 function auth(req, res, next) {
   const h = req.headers.authorization;
-  if (!h) return res.status(401).json({});
+  if (!h) return res.status(401).json({ message: "No token" });
+
   try {
     const t = h.split(" ")[1];
     req.user = jwt.verify(t, SECRET);
     next();
   } catch (e) {
-    res.status(401).json({});
+    res.status(401).json({ message: "Invalid token" });
   }
 }
 
+/**
+ * REGISTER
+ */
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    const u = new User({ name, email, passwordHash: hash, role });
+
+    const u = new User({
+      name,
+      email: email.toLowerCase(),
+      passwordHash: hash,
+      role,
+    });
+
     await u.save();
     res.json({ id: u._id, email: u.email });
   } catch (e) {
-    if (e.code === 11000) return res.status(409).json({ message: "email_exists" });
+    if (e.code === 11000)
+      return res.status(409).json({ message: "email_exists" });
     res.status(500).json({ message: "error" });
   }
 });
 
+/**
+ * LOGIN
+ */
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const u = await User.findOne({ email: email && email.toLowerCase() });
+
+    const u = await User.findOne({ email: email.toLowerCase() });
     if (!u) return res.status(401).json({ message: "invalid" });
+
     const ok = await bcrypt.compare(password, u.passwordHash);
     if (!ok) return res.status(401).json({ message: "invalid" });
-    const token = jwt.sign({ id: u._id, email: u.email, role: u.role }, SECRET, { expiresIn: "7d" });
-    res.json({ token, user: { id: u._id, name: u.name, email: u.email } });
+
+    const token = jwt.sign(
+      { id: u._id, email: u.email, role: u.role },
+      SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      user: { id: u._id, name: u.name, email: u.email },
+    });
   } catch (e) {
     res.status(500).json({ message: "error" });
   }
 });
 
-app.post("/api/petitions", auth, async (req, res) => {
-  try {
-    const p = new Petition({ title: req.body.title, description: req.body.description, owner: req.user.id });
-    await p.save();
-    res.status(201).json(p);
-  } catch (e) {
-    res.status(500).json({ message: "error" });
-  }
-});
+/**
+ * PETITION ROUTES (Member 2)
+ */
+app.use("/api/petitions", petitionRoutes);
 
-app.get("/api/petitions", async (req, res) => {
-  const list = await Petition.find().sort({ createdAt: -1 });
-  res.json(list);
-});
-
+/**
+ * SIGN PETITION
+ */
 app.post("/api/petitions/:id/sign", auth, async (req, res) => {
   try {
-    const s = new Signature({ petition: req.params.id, user: req.user.id, comment: req.body.comment });
+    const s = new Signature({
+      petitionId: req.params.id,
+      userId: req.user.id,
+    });
+
     await s.save();
     res.status(201).json(s);
   } catch (e) {
-    if (e.code === 11000) return res.status(409).json({ message: "already_signed" });
+    if (e.code === 11000)
+      return res.status(409).json({ message: "already_signed" });
     res.status(500).json({ message: "error" });
   }
 });
 
+/**
+ * POLLS
+ */
 app.post("/api/polls", auth, async (req, res) => {
   try {
-    const p = new Poll({ question: req.body.question, options: req.body.options, owner: req.user.id });
+    const p = new Poll({
+      question: req.body.question,
+      options: req.body.options,
+      owner: req.user.id,
+    });
     await p.save();
     res.status(201).json(p);
   } catch (e) {
@@ -109,19 +147,33 @@ app.post("/api/polls", auth, async (req, res) => {
   }
 });
 
+/**
+ * VOTE
+ */
 app.post("/api/polls/:id/vote", auth, async (req, res) => {
   try {
-    const v = new Vote({ poll: req.params.id, user: req.user.id, optionIndex: req.body.optionIndex });
+    const v = new Vote({
+      poll: req.params.id,
+      user: req.user.id,
+      optionIndex: req.body.optionIndex,
+    });
+
     await v.save();
+
     const key = `options.${req.body.optionIndex}.votes`;
     await Poll.updateOne({ _id: req.params.id }, { $inc: { [key]: 1 } });
+
     res.json({ status: "ok" });
   } catch (e) {
-    if (e.code === 11000) return res.status(409).json({ message: "already_voted" });
+    if (e.code === 11000)
+      return res.status(409).json({ message: "already_voted" });
     res.status(500).json({ message: "error" });
   }
 });
 
+/**
+ * USERS / DEBUG
+ */
 app.get("/api/users", async (req, res) => {
   const users = await User.find().select("-passwordHash");
   res.json(users);

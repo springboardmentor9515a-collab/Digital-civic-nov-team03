@@ -1,26 +1,16 @@
-const express = require("express");
-const router = express.Router();
-
-const auth = require("../middleware/auth");
-const isCitizen = require("../middleware/isCitizen");
-
-const {
+import express from "express";
+import {
   createPetition,
   getAllPetitions,
   getPetitionById,
-  signPetition,
-} = require("../controllers/petitionController");
+} from "../controllers/petitionController.js";
 
-// Create petition (citizen only)
-router.post("/", auth, isCitizen, createPetition);
+import auth from "../middleware/auth.js";
 
-// Get all petitions (public / auth optional)
-router.get("/", auth, getAllPetitions);
+const router = express.Router();
 
-// Get petition by ID
-router.get("/:id", auth, getPetitionById);
+router.post("/", auth, createPetition); 
+router.get("/", getAllPetitions);
+router.get("/:id", getPetitionById);
 
-// Sign petition (citizen only)
-router.post("/:id/sign", auth, isCitizen, signPetition);
-
-module.exports = router;
+export default router;
