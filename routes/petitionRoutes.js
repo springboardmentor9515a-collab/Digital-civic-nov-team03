@@ -11,15 +11,28 @@ router.post("/", async (req, res) => {
 
 // GET petitions
 router.get("/", async (req, res) => {
-  const { category, location, status } = req.query;
+  try {
+    const { location, category, status } = req.query;
 
-  let filter = {};
-  if (category) filter.category = category;
-  if (location) filter.location = location;
-  if (status) filter.status = status;
+    let filter = {};
 
-  const petitions = await Petition.find(filter);
-  res.json(petitions);
+    if (location) {
+      filter.location = location;
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (status) {
+      filter.status = status;
+    }
+
+    const petitions = await Petition.find(filter);
+    res.status(200).json(petitions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
