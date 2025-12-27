@@ -1,0 +1,307 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, Arial, sans-serif;
+}
+
+body {
+  background: #f6f7f9;
+}
+
+/* ================= TOP NAVBAR ================= */
+.topbar {
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.logo {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.beta {
+  font-size: 11px;
+  background: #e0e7ff;
+  color: #2563eb;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+.nav-links a {
+  margin: 0 14px;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.nav-links .active {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.user-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  text-align: center;
+  line-height: 32px;
+  font-weight: 500;
+}
+
+/* ================= LAYOUT ================= */
+
+.dash-body {
+  display: grid;
+  grid-template-columns: 220px 1fr; 
+  gap: 16px;
+  padding: 16px 0;
+  width: 100%;
+  align-items: start;
+}
+
+/* ================= LEFT SIDEBAR ================= */
+.left-panel {
+  width: 100%;
+}
+
+
+
+.profile-card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+  width: 100%;              /* 🔥 IMPORTANT */
+  border: 1px solid #eef0f3;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #eef2ff;
+  margin: auto;
+  line-height: 44px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.profile-card h4 {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.role,
+.location,
+.email {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.side-menu {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eef0f3;
+  padding: 6px;
+  width: 100%;              /* 🔥 IMPORTANT */
+}
+
+.side-menu li {
+  list-style: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #374151;
+}
+
+.side-menu li.active {
+  background: #e8f0ff;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.help {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7280;
+  padding-left: 6px;
+}
+
+/* ================= MAIN CONTENT ================= */
+.content {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding-left: 0;
+}
+
+/* Welcome Box */
+.welcome-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eef0f3;
+}
+
+.welcome-box h2 {
+  font-size: 20px;
+}
+
+.welcome-box p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.disabled-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* Stats */
+.stats-row {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  /* width: 220px; */
+    flex: 1;   
+     min-width: 260px;
+  border: 1px solid #eef0f3;
+}
+
+.stat-box h4 {
+  font-size: 14px;
+  color: #374151;
+}
+
+.stat-box h2 {
+  margin: 6px 0;
+  font-size: 24px;
+}
+
+.stat-box span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ================= PETITIONS ================= */
+.petitions-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eef0f3;
+}
+
+.petition-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.petition-head h3 {
+  font-size: 16px;
+}
+
+.location-btn {
+  background: #e8f0ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #2563eb;
+  font-size: 13px;
+}
+
+.categories {
+  margin: 14px 0;
+}
+
+.categories button {
+  margin: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.categories .active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.empty {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.clear {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.dashboard-wrapper {
+  width: 100%;         
+  margin: 0;
+   padding: 0 16px;
+     max-width: none;
+
+}
+
+
+/* 🔥 FORCE REMOVE CENTER GAP */
+.content > * {
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Agar container class hai */
+.container,
+.main,
+.main-content {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+}
