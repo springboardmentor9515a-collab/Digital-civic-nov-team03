@@ -2,21 +2,28 @@ import mongoose from "mongoose";
 
 const pollSchema = new mongoose.Schema(
   {
-    question: {
+    title: {
       type: String,
       required: true,
+      trim: true
     },
-    options: [
-      {
-        text: String,
-        votes: { type: Number, default: 0 },
-      },
-    ],
-    owner: {
+    options: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: (arr) => arr.length >= 2,
+        message: "At least two options required"
+      }
+    },
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: true
     },
+    targetLocation: {
+      type: String,
+      required: true
+    }
   },
   { timestamps: true }
 );

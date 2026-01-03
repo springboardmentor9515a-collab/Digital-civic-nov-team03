@@ -6,15 +6,14 @@ import cors from "cors";
 
 import connectDB from "./db.js";
 
-// Models
 import User from "./models/User.js";
 import Petition from "./models/petitions/Petition.js";
 import Signature from "./models/signatures/Signature.js";
 import Poll from "./models/polls/Poll.js";
 import Vote from "./models/votes/Vote.js";
 
-// Routes
 import petitionRoutes from "./routes/petitionRoutes.js";
+import pollRoutes from "./routes/pollRoutes.js";
 
 dotenv.config();
 
@@ -38,9 +37,6 @@ connectDB()
     console.error("DB Error:", err);
   });
 
-/**
- * AUTH MIDDLEWARE
- */
 function auth(req, res, next) {
   const h = req.headers.authorization;
   if (!h) return res.status(401).json({ message: "No token" });
@@ -54,9 +50,6 @@ function auth(req, res, next) {
   }
 }
 
-/**
- * REGISTER
- */
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -78,9 +71,6 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-/**
- * LOGIN
- */
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -106,14 +96,9 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-/**
- * PETITION ROUTES (Member 2)
- */
 app.use("/api/petitions", petitionRoutes);
+app.use("/api/polls", pollRoutes);
 
-/**
- * SIGN PETITION
- */
 app.post("/api/petitions/:id/sign", auth, async (req, res) => {
   try {
     const s = new Signature({
@@ -130,50 +115,6 @@ app.post("/api/petitions/:id/sign", auth, async (req, res) => {
   }
 });
 
-/**
- * POLLS
- */
-app.post("/api/polls", auth, async (req, res) => {
-  try {
-    const p = new Poll({
-      question: req.body.question,
-      options: req.body.options,
-      owner: req.user.id,
-    });
-    await p.save();
-    res.status(201).json(p);
-  } catch (e) {
-    res.status(500).json({ message: "error" });
-  }
-});
-
-/**
- * VOTE
- */
-app.post("/api/polls/:id/vote", auth, async (req, res) => {
-  try {
-    const v = new Vote({
-      poll: req.params.id,
-      user: req.user.id,
-      optionIndex: req.body.optionIndex,
-    });
-
-    await v.save();
-
-    const key = `options.${req.body.optionIndex}.votes`;
-    await Poll.updateOne({ _id: req.params.id }, { $inc: { [key]: 1 } });
-
-    res.json({ status: "ok" });
-  } catch (e) {
-    if (e.code === 11000)
-      return res.status(409).json({ message: "already_voted" });
-    res.status(500).json({ message: "error" });
-  }
-});
-
-/**
- * USERS / DEBUG
- */
 app.get("/api/users", async (req, res) => {
   const users = await User.find().select("-passwordHash");
   res.json(users);
