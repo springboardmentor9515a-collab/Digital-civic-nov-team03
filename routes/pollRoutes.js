@@ -23,34 +23,32 @@ router.post("/", async (req, res) => {
     });
 
     res.status(201).json(poll);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error("CREATE POLL ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
 /**
- * GET ALL POLLS (OPTIONAL FILTER BY LOCATION)
- * GET /api/polls?location=Hyderabad
+ * GET ALL POLLS (optional location filter)
  */
 router.get("/", async (req, res) => {
   try {
     const { location } = req.query;
 
     const filter = {};
-    if (location) {
-      filter.targetLocation = location;
-    }
+    if (location) filter.targetLocation = location;
 
     const polls = await Poll.find(filter).sort({ createdAt: -1 });
-    res.status(200).json(polls);
+    res.json(polls);
   } catch (error) {
+    console.error("GET POLLS ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 /**
- * GET POLL BY ID WITH RESULTS
- * GET /api/polls/:id
+ * GET POLL BY ID WITH VOTES
  */
 router.get("/:id", async (req, res) => {
   try {
@@ -61,12 +59,7 @@ router.get("/:id", async (req, res) => {
 
     const votes = await Vote.aggregate([
       { $match: { poll: poll._id } },
-      {
-        $group: {
-          _id: "$selectedOption",
-          count: { $sum: 1 }
-        }
-      }
+      { $group: { _id: "$selectedOption", count: { $sum: 1 } } },
     ]);
 
     const totalVotes = votes.reduce((sum, v) => sum + v.count, 0);
@@ -77,19 +70,19 @@ router.get("/:id", async (req, res) => {
       return {
         option,
         count,
-        percentage: totalVotes === 0 ? 0 : ((count / totalVotes) * 100).toFixed(2)
+        percentage: totalVotes === 0 ? 0 : ((count / totalVotes) * 100).toFixed(2),
       };
     });
 
     res.json({ poll, results });
   } catch (error) {
+    console.error("GET POLL ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 /**
  * VOTE ON POLL
- * POST /api/polls/:id/vote
  */
 router.post("/:id/vote", async (req, res) => {
   try {
@@ -102,8 +95,9 @@ router.post("/:id/vote", async (req, res) => {
     });
 
     res.status(201).json(vote);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    console.error("VOTE ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 

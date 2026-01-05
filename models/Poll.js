@@ -5,22 +5,22 @@ const pollSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
     },
+
     options: {
       type: [String],
       required: true,
-      validate: v => v.length >= 2
     },
+
+    // 🔥 FIX IS HERE
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
+      type: String,   // ❌ NOT ObjectId
+      required: true,
     },
+
     targetLocation: {
       type: String,
-      required: true
-    }
+    },
   },
   { timestamps: true }
 );
