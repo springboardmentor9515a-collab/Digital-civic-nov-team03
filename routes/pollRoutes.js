@@ -14,13 +14,17 @@ router.post("/", async (req, res) => {
     if (!title || !options || options.length < 2) {
       return res.status(400).json({ message: "Invalid poll data" });
     }
+  
 
-    const poll = await Poll.create({
-      title,
-      options,
-      targetLocation,
-      createdBy,
-    });
+    const mongoose = require("mongoose");
+
+const poll = await Poll.create({
+  title,
+  options,
+  targetLocation,
+  createdBy: new mongoose.Types.ObjectId(createdBy)
+});
+
 
     res.status(201).json(poll);
   } catch (error) {

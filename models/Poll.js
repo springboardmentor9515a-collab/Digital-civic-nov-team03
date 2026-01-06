@@ -5,22 +5,24 @@ const pollSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      maxlength: 200
     },
 
     options: {
-      type: [String],
-      required: true,
+      type: [String],   
+      required: true
     },
 
-    // 🔥 FIX IS HERE
     createdBy: {
-      type: String,   // ❌ NOT ObjectId
-      required: true,
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User",
+      required: true
     },
 
     targetLocation: {
       type: String,
-    },
+      maxlength: 100
+    }
   },
   { timestamps: true }
 );
