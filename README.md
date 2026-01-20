@@ -58,7 +58,7 @@ Environment Configuration
 
 Create a .env file inside the server folder and add the following variables:
 
-PORT=5000
+PORT=4000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 
@@ -69,7 +69,7 @@ npm start
 
 
 The server will run on:
-👉 http://localhost:5000
+👉 http://localhost:4000
 
 🌐 3. Frontend Setup (Client)
 
