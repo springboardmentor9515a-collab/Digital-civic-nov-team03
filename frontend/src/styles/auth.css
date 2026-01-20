@@ -1,0 +1,81 @@
+.auth-root{display:flex; min-height:100vh; align-items:stretch;}
+.left-panel{
+  flex:1;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+  min-width:50%;
+}
+.left-overlay{
+  background:rgba(96, 55, 30, 0.78);
+  opacity: 75%;
+  height:100%;
+  color:#fff;
+  padding:60px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.brand{
+  font-family: "Brush Script MT", cursive;
+  font-size:72px;
+  margin:0 0 10px 0;
+}
+.title{font-size:32px; margin:0 0 10px 0; font-weight:700}
+.desc{max-width:560px; line-height:1.4; margin-bottom:20px}
+.feature-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px}
+.feature-list li{display:flex; gap:18px; align-items:flex-start}
+.chev{font-size:34px; font-weight:700; margin-top:6px}
+.feature-list h3{margin:0; font-size:22px}
+.feature-list p{margin:6px 0 0 0; color:rgba(255,255,255,0.95); max-width:520px; line-height:1.5}
+.field-error { color: #b00020; font-size: 13px; margin-top: 6px; }
+
+.right-panel{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  min-width:480px;
+}
+
+/* Auth card */
+.auth-card{
+  width:480px;
+  background:#fff;
+  border-radius:12px;
+  padding:18px;
+  box-shadow: 6px 12px 30px rgba(0,0,0,0.18);
+  overflow:hidden;
+}
+.auth-heading h2{margin:8px 0 6px 0; font-size:32px}
+.auth-heading p{margin:0 0 12px 0; color:var(--muted)}
+
+.tabs{display:flex; border-bottom:1px solid #eaeaea; margin-bottom:8px}
+.tab{flex:1; text-align:center; padding:12px; text-decoration:none; color:#333; border-radius:6px 6px 0 0}
+.tab.active{background:#ececec; border:2px solid #000; border-bottom:0; box-shadow: 0 2px 0 rgba(0,0,0,0.05)}
+.auth-body{padding:18px}
+
+/* form */
+.form{display:flex; flex-direction:column; gap:12px}
+.form label{font-weight:600; font-size:14px}
+.form input[type="text"], .form input[type="password"], .form input{
+  width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:15px;
+}
+.radios{display:flex; gap:18px; margin:8px 0 16px}
+.btn{
+  margin-top:12px;
+  background:var(--brown);
+  color:#fff; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer;
+}
+.error{color:#b00020; padding:8px; border-radius:6px}
+.footer-link{margin-top:8px; text-align:center; color:#555}
+
+/* responsive */
+@media (max-width:900px){
+  .auth-root{flex-direction:column}
+  .left-panel{height:320px}
+  .right-panel{padding:20px}
+  .auth-card{width:100%}
+}
