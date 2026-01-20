@@ -45,7 +45,7 @@ MongoDB (Local installation or MongoDB Atlas)
 
 📥 1. Clone the Repository
 git clone https://github.com/springboardmentor9515a-collab/Digital-civic-nov-team01.git
-cd Digital-civic-nov-team01
+cd Digital-civic-nov-team03
 
 🖥️ 2. Backend Setup (Server)
 
