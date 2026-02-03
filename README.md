@@ -63,10 +63,9 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 
 
-Start the backend server:
+Start the backend server:-
 
 npm start
-
 
 The server will run on:
 👉 http://localhost:4000
@@ -78,11 +77,9 @@ Open a new terminal window and navigate to the client folder:
 cd client
 npm install
 
-
 Start the frontend application:
 
 npm run dev
-
 
 The application will run on:
 👉 http://localhost:5173
